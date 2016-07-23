@@ -1,0 +1,61 @@
+.big-mono {
+  font-family: monospace;
+  font-size: 2em;
+}
+
+.notice {
+  margin-top: 1em;
+  font-style: italic;
+}
+
+#change-up {
+  position: relative;
+}
+
+#letters {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  top: 150px;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  font-size: 300%;
+  border: solid black 2px;
+  background-color: white;
+}
+
+
+.scorecard {
+  background-color: white;
+  border: ridge black 2px;
+  width: 60%;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: bold;
+  font-size: 140%;
+  
+}
+
+.top-sheet {
+  background-color: rgba(255, 255, 255, 0.65);
+  margin: 5px;
+  padding: 10px;
+  border: ridge white 6px;
+  max-width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 200px;
+  
+}
+
+body {
+  background-color: lightblue;
+}
+
+* {
+  position: relative;
+}

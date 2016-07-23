@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<meta name="description" content="Make-a-Word challenge for the Learners Guild Enrollment Game: https://learnathon.learnersguild.org/">
+    <meta charset="utf-8">
+    <title>Make a Word</title>
+
+    <link rel="stylesheet" href="main.css" media="screen" charset="utf-8">
+  <style id="jsbin-css">
+.big-mono {
+  font-family: monospace;
+  font-size: 2em;
+}
+
+.notice {
+  margin-top: 1em;
+  font-style: italic;
+}
+
+#change-up {
+  position: relative;
+}
+
+#letters {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  top: 150px;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  font-size: 300%;
+  border: solid black 2px;
+  background-color: white;
+}
+
+
+.scorecard {
+  background-color: white;
+  border: ridge black 2px;
+  width: 60%;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: bold;
+  font-size: 140%;
+  
+}
+
+.top-sheet {
+  background-color: rgba(255, 255, 255, 0.65);
+  margin: 5px;
+  padding: 10px;
+  border: ridge white 6px;
+  max-width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 200px;
+  
+}
+
+body {
+  background-color: lightblue;
+}
+
+* {
+  position: relative;
+}
+
+</style>
+</head>
+  <body>
+    
+    <div id="letters" class="big-mono">
+      OPMARGR
+    </div>
+    <div class="top-sheet">
+    <section id="guess-area">
+      <input type="text" id="word-guess">
+
+      <button onclick="checkGuess()">Guess</button>
+      <button onClick="shuffle(getElementById('letters').innerHTML)">Shuffle</button>
+
+      <div id="game-message" class="notice">
+        Enter your first guess!
+      </div>
+    </section>
+      <div id="change-up">
+      <label>Get different letters!</label>
+      <button onClick="updateLetters()">Change</button>
+      </div>
+      <br>
+      <label>Number of Letters:</label>
+      <select id="number-of-letters">
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+      </select>
+    </div>
+    
+    <div class="scorecard">
+      <div id="wins">
+        <label>Wins </label>  
+        <div id="number-of-wins">
+          0
+        </div>
+      </div>
+      
+      <div id="losses">
+        <label>Losses </label>
+        <div id="number-of-losses">
+          0
+        </div>
+      </div>
+      <div id="score-tracker">
+        <label>Score</label>
+        <div id="player-score">0</div>
+      </div>
+      
+    </div>
+    
+  <script id="jsbin-javascript">
+
+// A function to get the set of possible letters
+function getLetters() {
+  // Select the element with the id 'letters'
+  var lettersContainer = document.querySelector('#letters');
+
+  // Get the text content of the element
+  var letters = lettersContainer.innerText;
+
+  // Return the letters
+  return letters;
+}
+
+// A function to get the user's guess
+function getGuess() {
+  // Select the input element where the user enters their guess
+  var wordGuess = document.querySelector('input#word-guess');
+
+  // Get the text content of the element
+  var guess = wordGuess.value;
+
+  // Return the guess
+  return guess;
+}
+
+// A function to display a message on the screen
+function showMessage(messageText) {
+  // Select the element to display a message
+  var messageElem = document.querySelector('#game-message');
+
+  // Set the text value of the element to the provided text
+  messageElem.innerText = messageText;
+}
+
+
+// A function to check whether the guessed word is correct or not
+function checkGuess() {
+  // Collect the text from the letters and the guess
+  var letters = getLetters();
+  var guess = getGuess();
+
+  // Convert both to uppercase so we can compare equals
+  guess = guess.toUpperCase();
+  letters = letters.toUpperCase();
+
+  // Determine if all the characters in the guess are in the letters
+  for (var i = 0; i < guess.length; i++) {
+    var currentChar = guess[i];
+
+    // If the current character can't be found in letters, the guess is incorrect
+    if (letters.indexOf(currentChar) === -1) {
+      // Show a message saying guess is incorrect
+      showMessage("Wrong guess, try again.");
+      
+      // Return false to exit the function 
+      
+      var losses = Number(document.querySelector('#number-of-losses').innerHTML);
+      losses++;
+      document.querySelector('#number-of-losses').innerHTML = losses;
+      return false;
+    }
+    
+  }
+
+  // If we've made it this far, then the guess must be correct!
+  // Show a message saying guess is correct
+  showMessage("Good guess, that is correct!");
+  // Return true to exit the function
+ 
+
+  // Determine score of guess
+  
+  var currentScore = Number(document.querySelector('#player-score').innerHTML);
+  var newScore = 0;
+  
+  var guessArray = guess.split("");
+  
+  for (var l in guessArray) {
+    
+    switch (guessArray[l]) {
+    
+    case "A":
+    case "E":
+    case "I":
+    case "O":
+    case "U":
+        
+      newScore += 2;
+      break;
+    
+    case "Q":
+    case "X":
+    case "Z":
+        
+      newScore+= 8;
+      break;
+      
+    default: newScore += 1;
+    }
+    
+  }
+  showMessage("Points: " + newScore);
+  currentScore += newScore;
+  
+  
+  console.log("New score: " + newScore);
+  document.querySelector('#player-score').innerHTML = currentScore;
+    
+  
+  var wins = Number(document.querySelector('#number-of-wins').innerHTML);
+  wins++;
+  document.querySelector('#number-of-wins').innerHTML = wins;
+  return true;
+}
+
+
+function updateLetters() {
+  document.querySelector('#letters').innerHTML = randomLetters();
+  
+}
+
+function randomLetters() {  
+  var cnstnts = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var vowels = "AEIOU";
+  var text = "";
+  var numOfLetters = document.querySelector("select#number-of-letters").value;
+  numOfLetters -= 2;
+  
+  for (var i=0; i<numOfLetters; i++)
+    text += cnstnts.charAt(Math.floor(Math.random() * cnstnts.length));
+  
+  
+  for (i=0; i<2; i++)
+    text += vowels.charAt(Math.random() * vowels.length);
+  
+  console.log(changeNumberOfLetters());
+  return text;
+  
+}
+
+function changeNumberOfLetters(){
+  return document.querySelector("select#number-of-letters").value;
+ 
+}
+
+function shuffle(currentLetters) {
+  var array = currentLetters.split("");
+  
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  
+  var shuffled = array.join("");
+  document.querySelector('#letters').innerHTML = shuffled;
+  return shuffled;
+  
+ 
+    
+  
+}
+
+</script>
+
+
+<script id="jsbin-source-css" type="text/css">.big-mono {
+  font-family: monospace;
+  font-size: 2em;
+}
+
+.notice {
+  margin-top: 1em;
+  font-style: italic;
+}
+
+#change-up {
+  position: relative;
+}
+
+#letters {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  top: 150px;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  font-size: 300%;
+  border: solid black 2px;
+  background-color: white;
+}
+
+
+.scorecard {
+  background-color: white;
+  border: ridge black 2px;
+  width: 60%;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: bold;
+  font-size: 140%;
+  
+}
+
+.top-sheet {
+  background-color: rgba(255, 255, 255, 0.65);
+  margin: 5px;
+  padding: 10px;
+  border: ridge white 6px;
+  max-width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 200px;
+  
+}
+
+body {
+  background-color: lightblue;
+}
+
+* {
+  position: relative;
+}
+</script>
+
+<script id="jsbin-source-javascript" type="text/javascript">
+// A function to get the set of possible letters
+function getLetters() {
+  // Select the element with the id 'letters'
+  var lettersContainer = document.querySelector('#letters');
+
+  // Get the text content of the element
+  var letters = lettersContainer.innerText;
+
+  // Return the letters
+  return letters;
+}
+
+// A function to get the user's guess
+function getGuess() {
+  // Select the input element where the user enters their guess
+  var wordGuess = document.querySelector('input#word-guess');
+
+  // Get the text content of the element
+  var guess = wordGuess.value;
+
+  // Return the guess
+  return guess;
+}
+
+// A function to display a message on the screen
+function showMessage(messageText) {
+  // Select the element to display a message
+  var messageElem = document.querySelector('#game-message');
+
+  // Set the text value of the element to the provided text
+  messageElem.innerText = messageText;
+}
+
+
+// A function to check whether the guessed word is correct or not
+function checkGuess() {
+  // Collect the text from the letters and the guess
+  var letters = getLetters();
+  var guess = getGuess();
+
+  // Convert both to uppercase so we can compare equals
+  guess = guess.toUpperCase();
+  letters = letters.toUpperCase();
+
+  // Determine if all the characters in the guess are in the letters
+  for (var i = 0; i < guess.length; i++) {
+    var currentChar = guess[i];
+
+    // If the current character can't be found in letters, the guess is incorrect
+    if (letters.indexOf(currentChar) === -1) {
+      // Show a message saying guess is incorrect
+      showMessage("Wrong guess, try again.");
+      
+      // Return false to exit the function 
+      
+      var losses = Number(document.querySelector('#number-of-losses').innerHTML);
+      losses++;
+      document.querySelector('#number-of-losses').innerHTML = losses;
+      return false;
+    }
+    
+  }
+
+  // If we've made it this far, then the guess must be correct!
+  // Show a message saying guess is correct
+  showMessage("Good guess, that is correct!");
+  // Return true to exit the function
+ 
+
+  // Determine score of guess
+  
+  var currentScore = Number(document.querySelector('#player-score').innerHTML);
+  var newScore = 0;
+  
+  var guessArray = guess.split("");
+  
+  for (var l in guessArray) {
+    
+    switch (guessArray[l]) {
+    
+    case "A":
+    case "E":
+    case "I":
+    case "O":
+    case "U":
+        
+      newScore += 2;
+      break;
+    
+    case "Q":
+    case "X":
+    case "Z":
+        
+      newScore+= 8;
+      break;
+      
+    default: newScore += 1;
+    }
+    
+  }
+  showMessage("Points: " + newScore);
+  currentScore += newScore;
+  
+  
+  console.log("New score: " + newScore);
+  document.querySelector('#player-score').innerHTML = currentScore;
+    
+  
+  var wins = Number(document.querySelector('#number-of-wins').innerHTML);
+  wins++;
+  document.querySelector('#number-of-wins').innerHTML = wins;
+  return true;
+}
+
+
+function updateLetters() {
+  document.querySelector('#letters').innerHTML = randomLetters();
+  
+}
+
+function randomLetters() {  
+  var cnstnts = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var vowels = "AEIOU";
+  var text = "";
+  var numOfLetters = document.querySelector("select#number-of-letters").value;
+  numOfLetters -= 2;
+  
+  for (var i=0; i<numOfLetters; i++)
+    text += cnstnts.charAt(Math.floor(Math.random() * cnstnts.length));
+  
+  
+  for (i=0; i<2; i++)
+    text += vowels.charAt(Math.random() * vowels.length);
+  
+  console.log(changeNumberOfLetters());
+  return text;
+  
+}
+
+function changeNumberOfLetters(){
+  return document.querySelector("select#number-of-letters").value;
+ 
+}
+
+function shuffle(currentLetters) {
+  var array = currentLetters.split("");
+  
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  
+  var shuffled = array.join("");
+  document.querySelector('#letters').innerHTML = shuffled;
+  return shuffled;
+  
+ 
+    
+  
+}
+</script></body>
+
+  <script type="text/javascript" src="script.js"></script>
+
+  <script type="text/javascript" src="https://rawgit.com/lg-bot/343694d651adedd80dfd458f20869f57/raw/39e5dba5b89cc9f48b9aa8ab6ec6f8bc78e34c03/tests.js"></script> 
+</html>
